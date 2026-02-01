@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORADEVAI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <!-- AUTH MODAL -->
+    <div class="auth-modal active" id="authModal">
+        <div class="auth-container">
+            <h2 class="auth-title" id="authTitle">Masuk ke Oradevai</h2>
+            <p class="auth-subtitle" id="authSubtitle">Akses platform AI terbaik Indonesia</p>
+            
+            <form class="auth-form" id="authForm">
+                <input type="text" class="auth-input" id="authUsername" placeholder="Username" required>
+                <input type="password" class="auth-input" id="authPassword" placeholder="Password" required>
+                <input type="password" class="auth-input" id="authConfirmPassword" placeholder="Confirm Password" style="display: none;">
+                
+                <button type="submit" class="auth-button" id="authSubmit">Masuk</button>
+            </form>
+            
+            <div class="auth-switch">
+                <span id="authSwitchText">Belum punya akun?</span>
+                <a class="auth-link" id="authSwitchLink">Daftar</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div class="app-container" id="appContainer">
+        <!-- HEADER -->
+        <header class="main-header">
+            <div class="header-content">
+                <div class="brand">ORADEVAI</div>
+                <div class="user-menu">
+                    <div class="nav-links">
+                        <a class="nav-link active" data-page="home">Home</a>
+                        <a class="nav-link" data-page="my-ai">AI Saya</a>
+                    </div>
+                    <div class="user-avatar" id="userAvatar">
+                        <span id="avatarInitial">U</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- DROPDOWN MENU -->
+            <div class="dropdown-menu" id="dropdownMenu">
+                <div class="dropdown-item" id="userNameItem">Username</div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item" id="settingsMenuItem">Pengaturan</div>
+                <div class="dropdown-item" id="logoutMenuItem">Keluar</div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <h1 class="section-title" id="pageTitle">AI Assistant</h1>
+            <div class="ai-grid-container">
+                <div class="ai-grid" id="aiGrid">
+                    <!-- AI cards will be generated here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- CREATE AI MODAL -->
+    <div class="modal-overlay" id="createModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Buat AI Baru</h2>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Nama AI</label>
+                    <input type="text" class="form-input" id="aiName" placeholder="Contoh: Asisten Pribadi">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Kepribadian / Sifat</label>
+                    <input type="text" class="form-input" id="aiPersonality" placeholder="Contoh: Ramah, Cerdas, Sarcastic">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Cerita Latar Belakang</label>
+                    <textarea class="form-textarea" id="aiBackground" placeholder="Ceritakan latar belakang AI ini..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pikiran Dalam</label>
+                    <textarea class="form-textarea" id="aiThoughts" placeholder="Apa yang ada di pikiran AI? (akan muncul dengan font italic)"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Perilaku Default</label>
+                    <textarea class="form-textarea" id="aiBehavior" placeholder="Bagaimana AI ini harus berperilaku?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Foto Profil AI (Opsional)</label>
+                    <div class="file-upload" id="avatarUpload">
+                        <div class="file-upload-icon">📷</div>
+                        <div class="file-upload-text">Klik untuk upload foto profil</div>
+                        <input type="file" id="aiAvatarInput" accept="image/*" style="display: none">
+                        <img id="avatarPreview" class="preview-image" style="display: none">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Latar Belakang Chat (Opsional)</label>
+                    <div class="file-upload" id="bgUpload">
+                        <div class="file-upload-icon">🖼️</div>
+                        <div class="file-upload-text">Klik untuk upload latar belakang</div>
+                        <input type="file" id="aiBgInput" accept="image/*" style="display: none">
+                        <img id="bgPreview" class="preview-image" style="display: none">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Akses Publik</label>
+                    <select class="form-input" id="aiPublic">
+                        <option value="true">Ya - Semua orang bisa chat</option>
+                        <option value="false">Tidak - Hanya saya yang bisa</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelCreateBtn">Batal</button>
+                <button class="btn btn-primary" id="createAIBtn">Buat AI</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHAT INTERFACE -->
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-header">
+            <button class="back-button" id="backButton">←</button>
+            <div class="chat-ai-info">
+                <div class="chat-ai-avatar" id="chatAiAvatar">
+                    <span id="chatAiAvatarText">AI</span>
+                </div>
+                <div class="chat-ai-details">
+                    <div class="chat-ai-name" id="chatAiName">ORADEVAI</div>
+                    <div class="chat-ai-creator" id="chatAiCreator">Oleh: Creator</div>
+                </div>
+            </div>
+            <button class="btn btn-secondary" id="openCommentsBtn">💬 Komentar</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- Chat messages will be added here -->
+        </div>
+        <div class="chat-input-area">
+            <div class="input-wrapper">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Ketik pesan Anda...">
+                <button class="send-button" id="sendButton">Kirim</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- COMMENTS MODAL -->
+    <div class="comments-modal" id="commentsModal">
+        <div class="comments-container">
+            <div class="comments-header">
+                <h3 class="comments-title" id="commentsTitle">Komentar</h3>
+                <button class="btn btn-secondary" id="closeCommentsBtn">Tutup</button>
+            </div>
+            <div class="comments-body" id="commentsBody">
+                <div class="comment-form">
+                    <input type="text" class="comment-input" id="commentInput" placeholder="Tulis komentar...">
+                    <button class="comment-submit" id="submitCommentBtn">Kirim</button>
+                </div>
+                <div id="commentsList">
+                    <!-- Comments will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Pengaturan</h2>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Nama Pengguna</label>
+                    <input type="text" class="form-input" id="settingsUsername" value="">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ganti Password</label>
+                    <input type="password" class="form-input" id="settingsPassword" placeholder="Password baru">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Konfirmasi Password</label>
+                    <input type="password" class="form-input" id="settingsConfirmPassword" placeholder="Konfirmasi password baru">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notifikasi</label>
+                    <select class="form-input" id="settingsNotifications">
+                        <option value="true">Aktif</option>
+                        <option value="false">Nonaktif</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelSettingsBtn">Batal</button>
+                <button class="btn btn-primary" id="saveSettingsBtn">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELETE AI MODAL -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Hapus AI</h2>
+            </div>
+            <div class="modal-body">
+                <p>Apakah Anda yakin ingin menghapus AI ini? Tindakan ini tidak dapat dibatalkan.</p>
+                <div class="form-group mt-4">
+                    <label class="form-label">Pilih tindakan:</label>
+                    <select class="form-input" id="deleteAction">
+                        <option value="disable">Nonaktifkan saja (AI tidak akan muncul di Home)</option>
+                        <option value="delete">Hapus permanen</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelDeleteBtn">Batal</button>
+                <button class="btn btn-primary" id="confirmDeleteBtn" style="background: #ff4444;">Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
