@@ -1,7 +1,7 @@
-// app.js
+// app.js - Perbaikan dengan menambahkan setupAuth()
 // Supabase Configuration
 const SUPABASE_URL = 'https://bxhrnnwfqlsoviysqcdw.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ4aHJubndmcWxzb3ZpeXNxY2R3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU3ODkzNDIsImV4cCI6MjA4MTM2NTM0Mn0.O7fpv0TrDd-8ZE3Z9B5zWyAuWROPis5GRnKMxmqncX8';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsudXBhYmFzZSIsInJlZiI6ImJ4aHJubndmcWxzb3ZpeXNxY2R3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU3ODkzNDIsImV4cCI6MjA4MTM2NTM0Mn0.O7fpv0TrDd-8ZE3Z9B5zWyAuWROPis5GRnKMxmqncX8';
 
 // Initialize Supabase Client
 const supabaseclient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -71,11 +71,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupEventListeners();
 });
 
-function setupEventListeners() {
-    // Auth
+// Fungsi setupAuth yang hilang
+function setupAuth() {
+    // Set up auth event listeners
     authSwitchLink.addEventListener('click', toggleAuthMode);
     authForm.addEventListener('submit', handleAuthSubmit);
     
+    // Show auth modal
+    authModal.classList.add('active');
+}
+
+function setupEventListeners() {
     // Navigation
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', handleNavigation);
