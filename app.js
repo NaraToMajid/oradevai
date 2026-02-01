@@ -370,9 +370,8 @@ async function loadAIs() {
         } else {
             // Show public AIs and user's own AIs
             query = query.or(
-  `creator_id.eq.${currentUser.id},is_public.eq.true,creator_id.eq.system`
+  `creator_id.eq.${currentUser.id},is_public.eq.true`
 );
-
         }
         
         const { data: userAIs, error } = await query;
